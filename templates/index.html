@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Python-сервер | Креативное пространство</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* хедер */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(59,130,246,0.3);
+            padding-bottom: 1rem;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .badge {
+            background: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            border: 1px solid #334155;
+            backdrop-filter: blur(4px);
+        }
+        .badge i {
+            color: #3b82f6;
+            margin-right: 6px;
+        }
+
+        /* Hero секция */
+        .hero {
+            text-align: center;
+            margin: 3rem 0 4rem;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: #cbd5e6;
+            max-width: 650px;
+            margin: 1rem auto 0;
+        }
+
+        /* карточки возможностей */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 1.8rem;
+            flex: 1;
+            min-width: 230px;
+            border: 1px solid rgba(59,130,246,0.3);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #3b82f6;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.4);
+        }
+        .card i {
+            font-size: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .card p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* интерактивный блок с API */
+        .api-playground {
+            background: #0f172a;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 3rem 0;
+            border: 1px solid #334155;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .api-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .api-title i {
+            font-size: 2rem;
+            color: #facc15;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        .col {
+            flex: 1;
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+        }
+        .col h3 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        button {
+            background: #3b82f6;
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        button:hover {
+            background: #2563eb;
+            transform: scale(1.02);
+        }
+        input {
+            background: #0f172a;
+            border: 1px solid #475569;
+            padding: 0.7rem 1rem;
+            border-radius: 40px;
+            color: white;
+            width: 100%;
+            font-family: inherit;
+            margin: 0.5rem 0 1rem;
+        }
+        .response-area {
+            background: #0a0f1c;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+            border-left: 4px solid #3b82f6;
+            word-break: break-word;
+            color: #a5f3fc;
+        }
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #0f172a;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+        .green-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1);}
+        }
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 2.2rem; }
+            .container { padding: 1rem; }
+            .api-playground { padding: 1.2rem; }
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo"><i class="fab fa-python"></i> RenderPySite</div>
+        <div class="badge"><i class="fas fa-server"></i> Flask + Render ready</div>
+    </div>
+
+    <div class="hero">
+        <h1>Современный Python-сервер</h1>
+        <p>Вдохновляющий дизайн, живое API и полная готовность к деплою на Render.com</p>
+        <div style="margin-top: 1.5rem;">
+            <span class="server-status"><span class="green-dot"></span> Сервер активен (Flask)</span>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="card">
+            <i class="fas fa-bolt"></i>
+            <h3>Молниеносный</h3>
+            <p>Построен на легковесном Flask, быстрая отдача статики и API</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-palette"></i>
+            <h3>Адаптивный дизайн</h3>
+            <p>Идеально смотрится на телефонах, планшетах и десктопах</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Готов к Render</h3>
+            <p>Поддержка health-чеков, переменные окружения, простой деплой</p>
+        </div>
+    </div>
+
+    <!-- Интерактивная зона — общение с бэкендом -->
+    <div class="api-playground">
+        <div class="api-title">
+            <i class="fas fa-code-branch"></i> 
+            <span>⚡ Живое взаимодействие с Python бэкендом</span>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3><i class="far fa-clock"></i> Серверное время</h3>
+                <p>Получить текущую дату и время от Flask API</p>
+                <button id="getTimeBtn"><i class="fas fa-sync-alt"></i> Запросить время</button>
+                <div id="timeResult" class="response-area">Нажмите кнопку → ответ появится здесь</div>
+            </div>
+            <div class="col">
+                <h3><i class="fas fa-user-astronaut"></i> Интерактивное приветствие</h3>
+                <p>Отправьте ваше имя на сервер (POST запрос)</p>
+                <input type="text" id="userName" placeholder="Ваше имя..." value="Алексей">
+                <button id="greetBtn"><i class="fas fa-paper-plane"></i> Отправить</button>
+                <div id="greetResult" class="response-area">Результат появится здесь</div>
+            </div>
+        </div>
+        <div style="font-size: 0.75rem; text-align: center; margin-top: 1rem; color: #5b6e8c;">
+            <i class="fas fa-shield-alt"></i> Работает через AJAX / Fetch — без перезагрузки страницы
+        </div>
+    </div>
+
+    <!-- Дополнительный блок: информация о деплое -->
+    <div style="background: linear-gradient(110deg, #1e293b, #0f172a); border-radius: 1.5rem; padding: 1.5rem; margin: 2rem 0;">
+        <h3 style="display: flex; gap: 0.7rem; align-items: center;"><i class="fab fa-render"></i> Деплой на Render за 3 шага</h3>
+        <ol style="margin-left: 1.5rem; margin-top: 0.8rem; line-height: 1.6;">
+            <li>Загрузите этот проект в репозиторий GitHub (включите app.py, requirements.txt, папку templates)</li>
+            <li>На Render.com выберите "New Web Service" → подключите репозиторий → указав: <strong>Build Command: pip install -r requirements.txt</strong> и <strong>Start Command: gunicorn app:app</strong></li>
+            <li>Нажмите "Create Web Service" — готово! Сайт будет доступен 24/7</li>
+        </ol>
+        <div style="background:#0a0f1a; border-radius: 1rem; padding: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.8rem;">
+            <i class="fas fa-terminal"></i> 📌 Проверка health: /health → {"status": "healthy"}
+        </div>
+    </div>
+
+    <footer>
+        <p>⚙️ Работает на Python + Flask | Асинхронные запросы к API | Гибкий дизайн</p>
+        <p style="margin-top: 0.5rem;">&copy; 2025 Render‑Ready проект — создан для демонстрации возможностей</p>
+    </footer>
+</div>
+
+<script>
+    // функция для обработки fetch с отображением состояний
+    async function fetchAPI(url, options = {}) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            return { success: true, data };
+        } catch (error) {
+            console.error(error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Кнопка получения времени (GET)
+    const timeBtn = document.getElementById('getTimeBtn');
+    const timeResultDiv = document.getElementById('timeResult');
+
+    timeBtn.addEventListener('click', async () => {
+        timeResultDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Загрузка...';
+        timeBtn.disabled = true;
+        timeBtn.classList.add('loading');
+        
+        const result = await fetchAPI('/api/time');
+        
+        if (result.success) {
+            timeResultDiv.innerHTML = `🕒 Серверное время: ${result.data.time}<br>📡 Статус: ${result.data.status}`;
+        } else {
+            timeResultDiv.innerHTML = `⚠️ Ошибка: ${result.error}. Убедитесь, что сервер запущен.`;
+        }
+        
+        timeBtn.disabled = false;
+        timeBtn.classList.remove('loading');
+    });
+
+    // Приветствие с отправкой имени
+    const greetBtn = document.getElementById('greetBtn');
+    const userNameInput = document.getElementById('userName');
+    const greetResultDiv = document.getElementById('greetResult');
+
+    greetBtn.addEventListener('click', async () => {
+        const name = userNameInput.value.trim();
+        if (name === "") {
+            greetResultDiv.innerHTML = "❓ Пожалуйста, введите имя перед отправкой.";
+            return;
+        }
+        
+        greetResultDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Отправка данных на сервер...';
+        greetBtn.disabled = true;
+        
+        const result = await fetchAPI('/api/greet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name })
+        });
+        
+        if (result.success) {
+            greetResultDiv.innerHTML = `✨ ${result.data.message}`;
+        } else {
+            greetResultDiv.innerHTML = `❌ Ошибка соединения: ${result.error}. Проверьте работу бэкенда.`;
+        }
+        
+        greetBtn.disabled = false;
+    });
+
+    // Небольшая анимация при загрузке страницы — проверка работоспособности API(необязательно)
+    window.addEventListener('DOMContentLoaded', () => {
+        // тихо проверим health эндпоинт, чтобы показать, что всё ок (без спама ошибками)
+        fetch('/health')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'healthy') {
+                    console.log('✅ Бэкенд в отличном состоянии');
+                }
+            })
+            .catch(e => console.warn('Health check не обязателен для UI'));
+    });
+</script>
+</body>
+</html>
